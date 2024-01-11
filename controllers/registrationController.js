@@ -4,7 +4,9 @@ const {
     passwordValidation,
     emailValidation,
 } = require("../helpers/validation");
+const nodemailer = require("nodemailer");
 const otpGenerator = require("otp-generator");
+
 
 let registrationController = async (req, res) => {
     let { name, email, password } = req.body;
@@ -33,7 +35,7 @@ let registrationController = async (req, res) => {
                 specialChars: true,
             });
 
-            bcrypt.hash(password, 10, function (err, hash) {
+            bcrypt.hash(password, 10, async function (err, hash) {
                 let user = new User({
                     name: name,
                     email: email,
@@ -42,6 +44,21 @@ let registrationController = async (req, res) => {
                 });
 
                 user.save();
+
+                const transporter = nodemailer.createTransport({
+                    service: "gmail",
+                    auth: {
+                        user: "tamimtanvirmahmud@gmail.com",
+                        pass: "xrqa yzzk kyol aghd",
+                    },
+                });
+
+                const info = await transporter.sendMail({
+                    from: process.env.BASE_EMAIL,
+                    to: email,
+                    subject: "Hello ✔",
+                    html: `<b>Hello world?</b> ${otp}`,
+                });
 
                 res.send(user);
             });
