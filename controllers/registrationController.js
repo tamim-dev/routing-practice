@@ -4,6 +4,7 @@ const {
     passwordValidation,
     emailValidation,
 } = require("../helpers/validation");
+const otpGenerator = require("otp-generator");
 
 let registrationController = async (req, res) => {
     let { name, email, password } = req.body;
@@ -27,11 +28,17 @@ let registrationController = async (req, res) => {
                 );
             }
 
+            const otp = otpGenerator.generate(6, {
+                upperCaseAlphabets: false,
+                specialChars: true,
+            });
+
             bcrypt.hash(password, 10, function (err, hash) {
                 let user = new User({
                     name: name,
                     email: email,
                     password: hash,
+                    otp: otp,
                 });
 
                 user.save();
