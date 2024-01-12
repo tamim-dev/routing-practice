@@ -7,7 +7,6 @@ const {
 const nodemailer = require("nodemailer");
 const otpGenerator = require("otp-generator");
 
-
 let registrationController = async (req, res) => {
     let { name, email, password } = req.body;
 
